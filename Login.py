@@ -2,8 +2,10 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 import time
 
+
 try:
     driver = webdriver.Chrome("C:/Setup-Folder/Selenium_Grid/chromedriver")
+    driver.maximize_window()
     driver.get("http://localhost/rental_mobil/")
     time.sleep(2)
 
@@ -23,6 +25,15 @@ try:
         By.CSS_SELECTOR, "button.btn.btn-lg.btn-primary.btn-block")
     e.submit()
     time.sleep(2)
+
+    # Asserting Condition
+    # Jika URL Diarahkan ke Halaman Utama Maka Assert True
+    # Jika URL Tidak Berubah Assert False
+    try:
+        assert driver.current_url == "http://localhost/rental_mobil/admin"
+        print("Assertion for Login Success!")
+    except AssertionError:
+        print("Assertion for Login Failed!")
 
 finally:
     if driver is not None:
