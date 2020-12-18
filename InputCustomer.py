@@ -3,7 +3,8 @@ from selenium.webdriver.common.by import By
 import time
 
 # Expected data yang akan diinput ke sistem
-expected_data = ["Avanza", "B 1234 ABC", "Putih", "2015"]
+expected_data = ["Dummy Name", "Jl.Dayeuhkolot, Bandung",
+                 "08979512412", "69219497194"]
 
 # Jumlah kolom yang akan diinput
 n_col = len(expected_data)
@@ -25,6 +26,8 @@ try:
     driver.get("http://localhost/rental_mobil/")
     time.sleep(2)
 
+    # Login System
+
     # Input Username
     e = driver.find_element(By.ID, "inputUname")
     e.send_keys("admin")
@@ -44,31 +47,36 @@ try:
     time.sleep(2)
 
     # Login Success
-    # Go To Data Master -> Mobil
+    # Go To Data Master -> Kostumer
 
     # Find Navigation Element
     e = driver.find_element(
-        By.XPATH, "//a[contains(@href, 'http://localhost/rental_mobil/admin/mobil')]")
+        By.XPATH, "//a[contains(@href, 'http://localhost/rental_mobil/admin/kostumer')]")
     e.click()
 
     time.sleep(2)
 
-    # Find Input Mobil Button
+    # Find Input Kostumer Button
     e = driver.find_element(
-        By.XPATH, "//a[contains(@href, 'http://localhost/rental_mobil/admin/mobil_add')]")
+        By.XPATH, "//a[contains(@href, 'http://localhost/rental_mobil/admin/kostumer_add')]")
     e.click()
 
-    # Input Mobil Form
-    e = driver.find_element(By.NAME, "merk")
+    # Input Kostumer Form
+    e = driver.find_element(By.NAME, "nama")
     e.send_keys(expected_data[0])
 
-    e = driver.find_element(By.NAME, "plat")
+    e = driver.find_element(By.NAME, "alamat")
     e.send_keys(expected_data[1])
 
-    e = driver.find_element(By.NAME, "warna")
+    e = driver.find_element(
+        By.CSS_SELECTOR, "input[type='radio'][value='L']")
+    e.click()
+    expected_data.append(e.get_attribute("value"))
+
+    e = driver.find_element(By.NAME, "hp")
     e.send_keys(expected_data[2])
 
-    e = driver.find_element(By.NAME, "tahun")
+    e = driver.find_element(By.NAME, "ktp")
     e.send_keys(expected_data[3])
 
     time.sleep(2)
@@ -82,19 +90,26 @@ try:
 
     # Cek Elemen Data pada Row Table yang Terakhir
     actual_data = []
+
+    # Menyusun Ulang Array sesuai Format Tabel
+    reorder = [0, 4, 2, 3, 1]
+    expected_data[:] = [expected_data[i] for i in reorder]
+
     for i in range(n_col):
         # Input ke dalam array setiap table column yang ingin diambil datanya
-        actual_data.append(driver.find_element(
-            By.XPATH, "//tr[last()]/td[" + str(i+2) + "]").text)
+        e = driver.find_element(
+            By.XPATH, "//tr[last()]/td[" + str(i+1) + "]").text.split('\n')
+        for data in e:
+            actual_data.append(data)
 
     # Asserting Condition
     # Jika data yang diinsert sama dengan yang ada pada table column, maka Test Sukses
     # Jika tidak, Test Gagal
     try:
         assert AssertData(n_col, expected_data, actual_data)
-        print("Assertion for Input Mobil Success!")
+        print("Assertion for Input Kostumer Success!")
     except AssertionError:
-        print("Assertion for Input Mobil failed!")
+        print("Assertion for Input Kostumer failed!")
 
 # Close Driver
 finally:
