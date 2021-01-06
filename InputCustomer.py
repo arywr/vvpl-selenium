@@ -98,7 +98,7 @@ try:
     for i in range(n_col):
         # Input ke dalam array setiap table column yang ingin diambil datanya
         e = driver.find_element(
-            By.XPATH, "//tr[last()]/td[" + str(i+1) + "]").text.split('\n')
+            By.XPATH, "//tr[last()]/td[" + str(i+2) + "]").text.split('\n')
         for data in e:
             actual_data.append(data)
 
